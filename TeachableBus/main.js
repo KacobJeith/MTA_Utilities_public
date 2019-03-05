@@ -18,9 +18,10 @@ import * as tf from '@tensorflow/tfjs';
 import * as knnClassifier from '@tensorflow-models/knn-classifier';
 
 // Number of classes to classify
-const NUM_CLASSES = 3;
+const NUM_CLASSES = 4;
 // Webcam Image size. Must be 227. 
-const IMAGE_SIZE = 227;
+const IMAGE_WIDTH = 800;
+const IMAGE_HEIGHT = 800*720/1280;
 // K value for KNN
 const TOPK = 10;
 
@@ -35,12 +36,6 @@ class Main {
     // Initiate deeplearn.js math and knn classifier objects
     this.bindPage();
 
-    // Create video element that will contain the webcam image
-    // <video controls>
-    //     <source src="TheBus.mp4" type="video/mp4"/>
-    // </video>
-
-
     this.video = document.createElement('video');
     this.video.setAttribute('controls', '');
     // this.video.setAttribute('playsinline', '');
@@ -49,11 +44,18 @@ class Main {
     document.body.appendChild(this.video);
 
     this.video.src = "TheBus.mp4";
-    this.video.width = IMAGE_SIZE;
-    this.video.height = IMAGE_SIZE;
+    this.video.width = IMAGE_WIDTH;
+    this.video.height = IMAGE_HEIGHT;
 
     this.video.addEventListener('playing', () => this.videoPlaying = true);
     this.video.addEventListener('paused', () => this.videoPlaying = false);
+
+    var labels = [
+      'Moving',
+      'Stopped @ Bus Stop',
+      'Stopped @ Intersection',
+      'Stopped @ Obstruction'
+    ]
 
     // Create training buttons and info texts    
     for (let i = 0; i < NUM_CLASSES; i++) {
@@ -63,7 +65,7 @@ class Main {
 
       // Create training button
       const button = document.createElement('button')
-      button.innerText = "Train " + i;
+      button.innerText = labels[i];
       div.appendChild(button);
 
       // Listen for mouse events when clicking the button
@@ -76,11 +78,75 @@ class Main {
       div.appendChild(infoText);
       this.infoTexts.push(infoText);
     }
+
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    div.style.marginBottom = '10px';
+
+    // Create Download Model Button
+    const button = document.createElement('button')
+    button.innerText = 'Download Model';
+    button.addEventListener('click', async () => {
+      console.log(this.knn)
+      // await this.knn.save('downloads://my-model-1')
+      this.save();
+    })
+    div.appendChild(button);
+
+  }
+
+  save() {
+    let dataset = this.knn.getClassifierDataset()
+    var datasetObj = {}
+    
+    Object.keys(dataset).forEach((key) => {
+      let data = dataset[key].dataSync();
+      // use Array.from() so when JSON.stringify() it coverts to an array string e.g [0.1,-0.2...] 
+      // instead of object e.g {0:"0.1", 1:"-0.2"...}
+      datasetObj[key] = Array.from(data); 
+    });
+
+    let jsonStr = JSON.stringify(datasetObj)
+
+    // localStorage.setItem("myKNN", jsonStr);
+    this.download('test.knn', jsonStr)
+  }
+
+  load() {
+    //can be change to other source
+   let dataset = localStorage.getItem("myKNN")
+   if (dataset) {
+    let tensorObj = JSON.parse(dataset)
+    //covert back to tensor
+    Object.keys(tensorObj).forEach((key) => {
+      tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1000, 1000])
+    })
+    this.knn.setClassifierDataset(tensorObj);
+   }
+   
+ }
+
+  download(filename, text) {
+
+    var element = document.createElement('a');
+    var downloadData = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var downloadURL = URL.createObjectURL(downloadData);
+    element.setAttribute('href', downloadURL);
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
   }
 
   async bindPage() {
     this.knn = knnClassifier.create();
     this.mobilenet = await mobilenetModule.load();
+
+    // this.load();
 
     this.start();
   }
