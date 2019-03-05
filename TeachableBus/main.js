@@ -57,6 +57,19 @@ class Main {
       'Stopped @ Obstruction'
     ]
 
+    const divupload = document.createElement('div');
+    divupload.style.marginBottom = '10px';
+    document.body.appendChild(divupload);
+
+    // Create Download Model Button
+    const buttonUpload = document.createElement('input')
+    buttonUpload.type = 'file';
+    buttonUpload.innerText = 'Select & Upload Model';
+    buttonUpload.addEventListener('change', (e) => { 
+      this.load(e.target.files[0]);
+    })
+    document.body.appendChild(buttonUpload);
+
     // Create training buttons and info texts    
     for (let i = 0; i < NUM_CLASSES; i++) {
       const div = document.createElement('div');
@@ -87,8 +100,6 @@ class Main {
     const button = document.createElement('button')
     button.innerText = 'Download Model';
     button.addEventListener('click', async () => {
-      console.log(this.knn)
-      // await this.knn.save('downloads://my-model-1')
       this.save();
     })
     div.appendChild(button);
@@ -112,19 +123,42 @@ class Main {
     this.download('test.knn', jsonStr)
   }
 
-  load() {
-    //can be change to other source
-   let dataset = localStorage.getItem("myKNN")
-   if (dataset) {
-    let tensorObj = JSON.parse(dataset)
-    //covert back to tensor
-    Object.keys(tensorObj).forEach((key) => {
-      tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1000, 1000])
-    })
-    this.knn.setClassifierDataset(tensorObj);
-   }
+  load(file) {
+  
+    var classifier = this.knn;
+
+    this.readFileIntoMemory(file, function(fileInfo) {
+      console.info("Read file " + fileInfo.name + " of size " + fileInfo.size);
+
+      if (fileInfo) {
+        var string = new TextDecoder("utf-8").decode(fileInfo.content);
+        
+        let tensorObj = JSON.parse(string)
+        //covert back to tensor
+        Object.keys(tensorObj).forEach((key) => {
+          tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1000, 1000])
+        })
+
+        classifier.setClassifierDataset(tensorObj);
+       }
+  });
+   
+  
    
  }
+
+ readFileIntoMemory (file, callback) {
+  var reader = new FileReader();
+  reader.onload = function () {
+      callback({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          content: new Uint8Array(this.result)
+       });
+  };
+  reader.readAsArrayBuffer(file);
+}
 
   download(filename, text) {
 
@@ -146,7 +180,7 @@ class Main {
     this.knn = knnClassifier.create();
     this.mobilenet = await mobilenetModule.load();
 
-    // this.load();
+    
 
     this.start();
   }
