@@ -32,6 +32,7 @@ class Main {
     this.infoTexts = [];
     this.training = -1; // -1 when no class is being trained
     this.videoPlaying = false;
+    this.videoSpeed = 1;
 
     // Initiate deeplearn.js math and knn classifier objects
     this.bindPage();
@@ -46,7 +47,7 @@ class Main {
 
     this.video.src = "TheBus.mp4";
     this.videoName = "TheBus";
-    this.video.playbackRate = 10;
+    this.video.playbackRate = this.videoSpeed;
     this.video.width = IMAGE_WIDTH;
     this.video.height = IMAGE_HEIGHT;
 
@@ -75,6 +76,17 @@ class Main {
       console.log(this.videoName)
       vidHandle.src = name;
       this.video.playbackRate = 10;
+    })
+
+
+    this.addButton(document.body, 'Toggle Video Speed', () => {
+      if (this.videoSpeed == 1) {
+        this.videoSpeed = 10;
+        this.video.playbackRate = 10;
+      } else {
+        this.videoSpeed = 1;
+        this.video.playbackRate = 1;
+      }
     })
     
     //Select Model
