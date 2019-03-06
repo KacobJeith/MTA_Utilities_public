@@ -4,15 +4,58 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
 
+public class TrackedItem
+{
+    double currentTime;
+    ControlVideo.StateNames currentState;
+
+    public TrackedItem(ControlVideo.StateNames _currentState, double _currentTime)
+    {
+        currentState = _currentState;
+        currentTime = _currentTime;
+    }
+
+    public ControlVideo.StateNames GetState()
+    {
+        return currentState;
+    }
+
+    public double GetTime()
+    {
+        return currentTime;
+    }
+}
+
 public class ControlVideo : MonoBehaviour
 {
+    public enum StateNames { state1, state2, state3, state4, state5, state6 };
+
     public Text videoTime;
     public Text playbackSpeed;
+    public Text StateText;
 
     VideoPlayer theVideoPlayer;
+    StateNames currentState;
+
+    List<TrackedItem> TrackedItems;
+
+    public void SaveStateData(string filePath)
+    {
+        using (System.IO.StreamWriter file =
+           new System.IO.StreamWriter(filePath, true))
+        {
+            for (int i = 0; i < TrackedItems.Count; i++)
+            {
+                file.WriteLine(TrackedItems[i].GetTime() + "," + TrackedItems[i].GetState());
+            }
+        }
+    }
 
     public void LoadNewVideo(string filePath)
     {
+        TrackedItems.Clear();
+        currentState = StateNames.state1;
+
         theVideoPlayer.url = filePath;
     }
 
@@ -41,38 +84,26 @@ public class ControlVideo : MonoBehaviour
         theVideoPlayer.playbackSpeed = 1;
     }
 
+    public void SetState(StateNames newState)
+    {
+        if(newState != currentState)
+        {
+            // Log a state change
+            currentState = newState;
+        }   
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         theVideoPlayer = GetComponent<VideoPlayer>();
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            theVideoPlayer.playbackSpeed++;
-        }
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            theVideoPlayer.playbackSpeed = 1;
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            theVideoPlayer.time -= 5;
-        }
-
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            theVideoPlayer.playbackSpeed = 0;
-        }
-
         videoTime.text = theVideoPlayer.time.ToString();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
+        StateText.text = currentState.ToString();
     }
 }
