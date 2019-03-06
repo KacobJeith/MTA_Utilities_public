@@ -36,14 +36,17 @@ class Main {
     // Initiate deeplearn.js math and knn classifier objects
     this.bindPage();
 
+    this.csvOutput = [['Frame Time', 'Class Index']];
     this.video = document.createElement('video');
     this.video.setAttribute('controls', '');
-    // this.video.setAttribute('playsinline', '');
+    this.video.setAttribute('preload', 'none');
 
     // Add video element to DOM
     document.body.appendChild(this.video);
 
     this.video.src = "TheBus.mp4";
+    this.videoName = "TheBus";
+    this.video.playbackRate = 10;
     this.video.width = IMAGE_WIDTH;
     this.video.height = IMAGE_HEIGHT;
 
@@ -57,21 +60,33 @@ class Main {
       'Stopped @ Obstruction'
     ]
 
-    const divupload = document.createElement('div');
-    divupload.style.marginBottom = '10px';
-    document.body.appendChild(divupload);
+    // Select Video
+    const vidSelect = document.createElement('div');
+    document.body.appendChild(vidSelect);
+    vidSelect.style.marginBottom = '10px';
 
-    // Create Download Model Button
-    const buttonUpload = document.createElement('input')
-    buttonUpload.type = 'file';
-    buttonUpload.innerText = 'Select & Upload Model';
-    buttonUpload.addEventListener('change', (e) => { 
-      this.load(e.target.files[0]);
+    var vidHandle = this.video;
+
+    this.createInfoText(vidSelect, 'Select Video')
+    this.addFileSelect('Select & Upload Video', (e) => {
+      console.log('Selected Video: ', e.target.files[0])
+      var name = e.target.files[0].name
+      this.videoName = name.split('.').slice(0,1)[0];
+      console.log(this.videoName)
+      vidHandle.src = name;
+      this.video.playbackRate = 10;
     })
-    document.body.appendChild(buttonUpload);
+    
+    //Select Model
+    const classifierSelect = document.createElement('div');
+    document.body.appendChild(classifierSelect);
+    classifierSelect.style.marginBottom = '10px';
+    
+    this.createInfoText(classifierSelect, 'Select & Upload Model')
+    this.addFileSelect('Select & Upload Model', (e) => this.load(e.target.files[0]))
 
     // Create training buttons and info texts    
-    for (let i = 0; i < NUM_CLASSES; i++) {
+    for (let i = 0; i < labels.length; i++) {
       const div = document.createElement('div');
       document.body.appendChild(div);
       div.style.marginBottom = '10px';
@@ -85,11 +100,7 @@ class Main {
       button.addEventListener('mousedown', () => this.training = i);
       button.addEventListener('mouseup', () => this.training = -1);
 
-      // Create info text
-      const infoText = document.createElement('span')
-      infoText.innerText = " No examples added";
-      div.appendChild(infoText);
-      this.infoTexts.push(infoText);
+      this.createInfoText(div, " No examples added", (infoText) => this.infoTexts.push(infoText));
     }
 
     const div = document.createElement('div');
@@ -97,13 +108,61 @@ class Main {
     div.style.marginBottom = '10px';
 
     // Create Download Model Button
+    this.addButton(document.body, 'Download Model', () => this.save())
+    this.addButton(document.body, 'Download Prediction CSV', () => this.processEntireVideo())
+  }
+
+  processEntireVideo() {
+    
+    //let csvContent = "data:text/csv;charset=utf-8" + this.csvOutput.map(row=>row.join(",")).join("\n");
+
+    var lineArray = [];
+
+    this.csvOutput.forEach(function (infoArray, index) {
+      var line = infoArray.join(",");
+      lineArray.push(line);//index == 0 ? "data:text/csv;charset=utf-8," + line : line);
+    });
+
+    var csvContent = lineArray.join("\n");
+    
+    // var encodedUri = encodeURI(csvContent);
+    var name = this.videoName + '_predictions.csv';
+
+    this.download(name, csvContent);
+  }
+
+  addButton(div, text, callback = () => {}) {
     const button = document.createElement('button')
-    button.innerText = 'Download Model';
+    button.innerText = text;
     button.addEventListener('click', async () => {
-      this.save();
+      callback();
     })
     div.appendChild(button);
+  }
 
+  createInfoText(div, text, callback = () => {}) {
+    // Create info text
+    const infoText = document.createElement('span')
+    infoText.innerText = text;
+    div.appendChild(infoText);
+    callback(infoText)
+  }
+
+  addFileSelect(text, callback) {
+    const div = document.createElement('div');
+    div.style.marginBottom = '10px';
+    document.body.appendChild(div);
+
+    // Create Download Model Button
+    const button = document.createElement('input')
+    button.type = 'file';
+    button.style.marginBottom = '10px';
+    button.innerText = text;
+    button.addEventListener('change', (event) => { 
+      callback(event)
+    })
+    document.body.appendChild(button);
+    
   }
 
   save() {
@@ -120,7 +179,7 @@ class Main {
     let jsonStr = JSON.stringify(datasetObj)
 
     // localStorage.setItem("myKNN", jsonStr);
-    this.download('test.knn', jsonStr)
+    this.download('trainedClassifier.knn', jsonStr, 'text/plain;charset=utf-8')
   }
 
   load(file) {
@@ -160,10 +219,10 @@ class Main {
   reader.readAsArrayBuffer(file);
 }
 
-  download(filename, text) {
+  download(filename, text, encoding = '') {
 
     var element = document.createElement('a');
-    var downloadData = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var downloadData = new Blob([text], { type: encoding});//'text/plain;charset=utf-8' });
     var downloadURL = URL.createObjectURL(downloadData);
     element.setAttribute('href', downloadURL);
     element.setAttribute('download', filename);
@@ -199,8 +258,10 @@ class Main {
   }
 
   async animate() {
-    if (this.videoPlaying) {
+    
+    if (this.videoPlaying && this.video.paused == false) {
       // Get image data from video element
+      const frame = this.video.currentTime
       const image = tf.fromPixels(this.video);
 
       let logits;
@@ -216,11 +277,13 @@ class Main {
       }
 
       const numClasses = this.knn.getNumClasses();
-      if (numClasses > 0) {
+      if (numClasses > 0 ) {
 
         // If classes have been added run predict
         logits = infer();
         const res = await this.knn.predictClass(logits, TOPK);
+        // console.log('Prediction: ', res.classIndex)
+        this.csvOutput.push([frame, res.classIndex])
 
         for (let i = 0; i < NUM_CLASSES; i++) {
 
