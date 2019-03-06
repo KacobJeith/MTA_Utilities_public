@@ -55,6 +55,7 @@ public class ControlVideo : MonoBehaviour
     {
         TrackedItems.Clear();
         currentState = StateNames.state1;
+        TrackedItems.Add(new TrackedItem(currentState, 0));
 
         theVideoPlayer.url = filePath;
     }
@@ -88,7 +89,7 @@ public class ControlVideo : MonoBehaviour
     {
         if(newState != currentState)
         {
-            // Log a state change
+            TrackedItems.Add(new TrackedItem(newState, theVideoPlayer.time));
             currentState = newState;
         }   
     }
