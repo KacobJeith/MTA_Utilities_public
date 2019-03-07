@@ -104,6 +104,11 @@ public class ControlVideo : MonoBehaviour
         theVideoPlayer.playbackSpeed = 1;
     }
 
+    public void DecreasePlaybackSpeed()
+    {
+        theVideoPlayer.playbackSpeed--;
+    }
+
     public void SetState(StateNames newState)
     {
         if(newState != currentState)
