@@ -63,6 +63,7 @@
     <Compile Include="Assets\ControlScript.cs" />
     <Compile Include="Assets\ControlVideo.cs" />
     <Compile Include="Assets\CSVOptionLibrary\CSVOptionParser.cs" />
+    <Compile Include="Assets\LoadVideoData.cs" />
     <Compile Include="Assets\PlayPauseButton.cs" />
     <Compile Include="Assets\SaveCurrentData.cs" />
     <Compile Include="Assets\SetStateScript.cs" />

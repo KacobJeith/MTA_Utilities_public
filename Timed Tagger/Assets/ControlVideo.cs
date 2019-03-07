@@ -48,6 +48,11 @@ public class ControlVideo : MonoBehaviour
 
     public List<GameObject> StateButtons;
 
+    public void SetNewTrackedItemsArray(List <TrackedItem> newItems)
+    {
+        TrackedItems = newItems;
+    }
+
     void GetCurrentState()
     {
         double currentTime = theVideoPlayer.time;
