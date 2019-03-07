@@ -174,6 +174,27 @@ public class ControlVideo : MonoBehaviour
         }
     }
 
+    string Get2DigitString(int value)
+    {
+        string numberString = "";
+        if (value < 10)
+            numberString += 0;
+        numberString += value;
+
+        return numberString;
+    }
+
+    string GetFormattedTime()
+    {
+        double currentTime = theVideoPlayer.time;
+
+        int seconds = (int)currentTime % 60;
+        int minutes = ((int)currentTime % 3600) / 60;
+        int hours = ((int)currentTime / 3600);
+
+        return Get2DigitString(hours) + ":" + Get2DigitString(minutes) + ":" + Get2DigitString(seconds);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -193,7 +214,7 @@ public class ControlVideo : MonoBehaviour
     {
         DoOverwriteLogic();
         GetCurrentState();
-        videoTime.text = theVideoPlayer.time.ToString();
+        videoTime.text = GetFormattedTime();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
         StateText.text = ((int)currentState).ToString() + " : " + StateNameStrings[(int)currentState];
     }
