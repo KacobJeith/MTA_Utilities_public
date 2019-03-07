@@ -70,7 +70,7 @@ public class ControlVideo : MonoBehaviour
         {
             for (int i = 0; i < TrackedItems.Count; i++)
             {
-                file.WriteLine(TrackedItems[i].GetTime() + "," + TrackedItems[i].GetState());
+                file.WriteLine(TrackedItems[i].GetTime() + "," + (int)TrackedItems[i].GetState());
             }
         }
     }
@@ -78,7 +78,7 @@ public class ControlVideo : MonoBehaviour
     public void LoadNewVideo(string filePath)
     {
         TrackedItems.Clear();
-        currentState = StateNames.state1;
+        currentState = StateNames.state0;
         TrackedItems.Add(new TrackedItem(currentState, 0));
 
         theVideoPlayer.url = filePath;
@@ -169,7 +169,7 @@ public class ControlVideo : MonoBehaviour
         for(int i = 0; i < StateButtons.Count; i++)
         {
             string stateName = SystemOptions.GetStringOption("state" + i);
-            StateButtons[i].transform.GetChild(0).gameObject.GetComponent<Text>().text = "Set " + stateName;
+            StateButtons[i].transform.GetChild(0).gameObject.GetComponent<Text>().text = stateName;
             StateNameStrings.Add(stateName);
         }
     }
