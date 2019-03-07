@@ -28,7 +28,7 @@ public class TrackedItem
 
 public class ControlVideo : MonoBehaviour
 {
-    public enum StateNames { state1, state2, state3, state4, state5, state6 };
+    public enum StateNames { state0, state1, state2, state3, state4, state5 };
 
     public Text videoTime;
     public Text playbackSpeed;
