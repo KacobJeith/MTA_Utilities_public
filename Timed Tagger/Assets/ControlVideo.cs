@@ -163,8 +163,8 @@ public class ControlVideo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetCurrentState();
         DoOverwriteLogic();
+        GetCurrentState();
         videoTime.text = theVideoPlayer.time.ToString();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
         StateText.text = currentState.ToString();
