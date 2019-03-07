@@ -122,6 +122,11 @@ public class ControlVideo : MonoBehaviour
         theVideoPlayer.playbackSpeed--;
     }
 
+    public void SetVideoTime(double newTime)
+    {
+        theVideoPlayer.time = newTime;
+    }
+
     public void SetState(StateNames newState)
     {
         if(newState != currentState)
@@ -189,7 +194,7 @@ public class ControlVideo : MonoBehaviour
         return numberString;
     }
 
-    string GetFormattedTime()
+    public string GetFormattedTime()
     {
         double currentTime = theVideoPlayer.time;
 
