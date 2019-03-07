@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\ControlScript.cs" />
     <Compile Include="Assets\ControlVideo.cs" />
+    <Compile Include="Assets\PlayPauseButton.cs" />
     <Compile Include="Assets\SaveCurrentData.cs" />
     <Compile Include="Assets\SetStateScript.cs" />
     <Compile Include="Assets\ToggleButton.cs" />

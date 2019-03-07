@@ -10,7 +10,7 @@ public class VideoControlButtonScript : MonoBehaviour, IPointerClickHandler
     public buttonFunction currentButtonFunction;
     public ControlVideo theVideoController;
 
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         if(currentButtonFunction == buttonFunction.play)
         {
