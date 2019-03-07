@@ -41,6 +41,8 @@ public class ControlVideo : MonoBehaviour
 
     List<TrackedItem> TrackedItems;
 
+    float previousPlaybackSpeed = 1.0f;
+
     void GetCurrentState()
     {
         double currentTime = theVideoPlayer.time;
@@ -96,12 +98,13 @@ public class ControlVideo : MonoBehaviour
 
     public void PauseVideo()
     {
+        previousPlaybackSpeed = theVideoPlayer.playbackSpeed;
         theVideoPlayer.playbackSpeed = 0;
     }
 
     public void PlayVideo()
     {
-        theVideoPlayer.playbackSpeed = 1;
+        theVideoPlayer.playbackSpeed = previousPlaybackSpeed;
     }
 
     public void DecreasePlaybackSpeed()
