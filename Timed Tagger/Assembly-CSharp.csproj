@@ -64,6 +64,7 @@
     <Compile Include="Assets\ControlVideo.cs" />
     <Compile Include="Assets\SaveCurrentData.cs" />
     <Compile Include="Assets\SetStateScript.cs" />
+    <Compile Include="Assets\ToggleButton.cs" />
     <Compile Include="Assets\Video Control UI Scripts\GetVideoPath.cs" />
     <Compile Include="Assets\Video Control UI Scripts\VideoControlButtonScript.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

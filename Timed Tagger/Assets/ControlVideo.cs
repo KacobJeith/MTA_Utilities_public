@@ -39,6 +39,16 @@ public class ControlVideo : MonoBehaviour
 
     List<TrackedItem> TrackedItems;
 
+    void GetCurrentState()
+    {
+        double currentTime = theVideoPlayer.time;
+
+        for(int i = 0; i < TrackedItems.Count; i++)
+        {
+
+        }
+    }
+
     public void SaveStateData(string filePath)
     {
         using (System.IO.StreamWriter file =
@@ -91,6 +101,24 @@ public class ControlVideo : MonoBehaviour
         {
             TrackedItems.Add(new TrackedItem(newState, theVideoPlayer.time));
             currentState = newState;
+
+            string TrackedItemStr = "";
+            for (int i = 0; i < TrackedItems.Count; i++)
+            {
+                TrackedItemStr += TrackedItems[i].GetTime();
+                TrackedItemStr += ", ";
+            }
+            Debug.Log(TrackedItemStr);
+
+            TrackedItems.Sort((x, y) => x.GetTime().CompareTo(y.GetTime()));
+
+            TrackedItemStr = "";
+            for(int i = 0; i < TrackedItems.Count; i++)
+            {
+                TrackedItemStr += TrackedItems[i].GetTime();
+                TrackedItemStr += ", ";
+            }
+            Debug.Log(TrackedItemStr);
         }   
     }
 
