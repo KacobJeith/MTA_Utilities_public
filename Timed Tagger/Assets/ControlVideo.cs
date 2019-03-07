@@ -28,7 +28,8 @@ public class TrackedItem
 
 public class ControlVideo : MonoBehaviour
 {
-    public enum StateNames { state0, state1, state2, state3, state4, state5 };
+    public enum StateNames { state0 = 0, state1 = 1, state2 = 2, state3 = 3, state4 = 4, state5 = 5};
+    List<string> StateNameStrings;
 
     public Text videoTime;
     public Text playbackSpeed;
@@ -42,6 +43,10 @@ public class ControlVideo : MonoBehaviour
     List<TrackedItem> TrackedItems;
 
     float previousPlaybackSpeed = 1.0f;
+
+    CSVOptionParser SystemOptions;
+
+    public List<GameObject> StateButtons;
 
     void GetCurrentState()
     {
@@ -159,13 +164,28 @@ public class ControlVideo : MonoBehaviour
         }
     }
 
+    void SetButtonNames()
+    {
+        for(int i = 0; i < StateButtons.Count; i++)
+        {
+            string stateName = SystemOptions.GetStringOption("state" + i);
+            StateButtons[i].transform.GetChild(0).gameObject.GetComponent<Text>().text = "Set " + stateName;
+            StateNameStrings.Add(stateName);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        SystemOptions = new CSVOptionParser("VideoPlayerOptions.csv");
+
         Screen.SetResolution(800, 600, false);
 
         TrackedItems = new List<TrackedItem>();
         theVideoPlayer = GetComponent<VideoPlayer>();
+        StateNameStrings = new List<string>();
+
+        SetButtonNames();
     }
 
     // Update is called once per frame
@@ -175,6 +195,6 @@ public class ControlVideo : MonoBehaviour
         GetCurrentState();
         videoTime.text = theVideoPlayer.time.ToString();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
-        StateText.text = currentState.ToString();
+        StateText.text = ((int)currentState).ToString() + " : " + StateNameStrings[(int)currentState];
     }
 }

@@ -510,10 +510,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 30
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 3
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1594,6 +1594,13 @@ MonoBehaviour:
   playbackSpeed: {fileID: 1386615329}
   StateText: {fileID: 178350935}
   OverwriteButton: {fileID: 632682728}
+  StateButtons:
+  - {fileID: 595568456}
+  - {fileID: 1879207029}
+  - {fileID: 1700603563}
+  - {fileID: 1367315445}
+  - {fileID: 1687794358}
+  - {fileID: 724563413}
 --- !u!4 &907197795
 Transform:
   m_ObjectHideFlags: 0
