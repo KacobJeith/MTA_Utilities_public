@@ -34,6 +34,8 @@ public class ControlVideo : MonoBehaviour
     public Text playbackSpeed;
     public Text StateText;
 
+    public ToggleButton OverwriteButton;
+
     VideoPlayer theVideoPlayer;
     StateNames currentState;
 
@@ -45,7 +47,12 @@ public class ControlVideo : MonoBehaviour
 
         for(int i = 0; i < TrackedItems.Count; i++)
         {
+            if(TrackedItems[i].GetTime() > currentTime)
+            {
+                break;
+            }
 
+            currentState = TrackedItems[i].GetState();
         }
     }
 
@@ -73,11 +80,13 @@ public class ControlVideo : MonoBehaviour
     public void SkipAhead(float numberOfSeconds)
     {
         theVideoPlayer.time += numberOfSeconds;
+        OverwriteStartTime = theVideoPlayer.time;
     }
 
     public void SkipBack(float numberOfSeconds)
     {
         theVideoPlayer.time -= numberOfSeconds;
+        OverwriteStartTime = theVideoPlayer.time;
     }
 
     public void IncreasePlaybackSpeed()
@@ -102,24 +111,44 @@ public class ControlVideo : MonoBehaviour
             TrackedItems.Add(new TrackedItem(newState, theVideoPlayer.time));
             currentState = newState;
 
-            string TrackedItemStr = "";
-            for (int i = 0; i < TrackedItems.Count; i++)
-            {
-                TrackedItemStr += TrackedItems[i].GetTime();
-                TrackedItemStr += ", ";
-            }
-            Debug.Log(TrackedItemStr);
-
             TrackedItems.Sort((x, y) => x.GetTime().CompareTo(y.GetTime()));
 
-            TrackedItemStr = "";
-            for(int i = 0; i < TrackedItems.Count; i++)
-            {
-                TrackedItemStr += TrackedItems[i].GetTime();
-                TrackedItemStr += ", ";
-            }
-            Debug.Log(TrackedItemStr);
+            // Start overwrite time where the last state was added;
+            OverwriteStartTime = theVideoPlayer.time;
         }   
+    }
+
+    bool InOverwriteMode = false;
+    double OverwriteStartTime = 0;
+    void DoOverwriteLogic()
+    {
+        if(OverwriteButton.Toggled)
+        {
+            if(!InOverwriteMode)
+            {
+                InOverwriteMode = true;
+                OverwriteStartTime = theVideoPlayer.time;
+            }
+
+            OverwriteDataIfNecessary();
+        }
+        else
+        {
+            InOverwriteMode = false;
+        }
+    }
+
+    void OverwriteDataIfNecessary()
+    {
+        for(int i = 0; i < TrackedItems.Count; i++)
+        {
+            if(TrackedItems[i].GetTime() > OverwriteStartTime && TrackedItems[i].GetTime() < theVideoPlayer.time)
+            {
+                TrackedItems.RemoveAt(i);
+                OverwriteDataIfNecessary();
+                break;
+            }
+        }
     }
 
     // Start is called before the first frame update
@@ -134,6 +163,8 @@ public class ControlVideo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GetCurrentState();
+        DoOverwriteLogic();
         videoTime.text = theVideoPlayer.time.ToString();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
         StateText.text = currentState.ToString();
