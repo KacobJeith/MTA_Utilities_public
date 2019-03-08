@@ -61,20 +61,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\ControlScript.cs" />
+    <Compile Include="Assets\ControlVideo.cs" />
+    <Compile Include="Assets\SaveCurrentData.cs" />
+    <Compile Include="Assets\SetStateScript.cs" />
+    <Compile Include="Assets\Video Control UI Scripts\GetVideoPath.cs" />
+    <Compile Include="Assets\Video Control UI Scripts\VideoControlButtonScript.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.DataPrivacy">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>F:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -281,19 +286,19 @@
       <HintPath>F:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Advertisements">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Advertisements.Editor">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.Editor.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Editor">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Editor.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Tracker">
-      <HintPath>F:/Dev/Palisade Labs/MTA/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
+      <HintPath>F:/Dev/Palisade Labs/MTA/MTA_Utilities/Timed Tagger/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>F:/Program Files/Unity/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -640,6 +645,12 @@
     <Reference Include="System.Xml.Serialization">
       <HintPath>F:/Program Files/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{683F50EB-A2FA-F4CA-F750-A7BB8375C15D}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
