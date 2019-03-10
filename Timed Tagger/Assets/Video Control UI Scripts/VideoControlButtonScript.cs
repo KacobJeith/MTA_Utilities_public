@@ -5,12 +5,12 @@ using UnityEngine.EventSystems;
 
 public class VideoControlButtonScript : MonoBehaviour, IPointerClickHandler
 {
-    public enum buttonFunction { play, pause, skipBack, increaseSpeed, skipForward };
+    public enum buttonFunction { play, pause, skipBack, increaseSpeed, skipForward, decreaseSpeed };
 
     public buttonFunction currentButtonFunction;
     public ControlVideo theVideoController;
 
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         if(currentButtonFunction == buttonFunction.play)
         {
@@ -31,6 +31,10 @@ public class VideoControlButtonScript : MonoBehaviour, IPointerClickHandler
         else if (currentButtonFunction == buttonFunction.skipForward)
         {
             theVideoController.SkipAhead(5);
+        }
+        else if(currentButtonFunction == buttonFunction.decreaseSpeed)
+        {
+            theVideoController.DecreasePlaybackSpeed();
         }
     }
 
