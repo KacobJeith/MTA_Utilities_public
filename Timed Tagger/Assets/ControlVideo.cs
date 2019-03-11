@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
+using System;
 
 public class TrackedItem
 {
@@ -51,6 +52,8 @@ public class ControlVideo : MonoBehaviour
     public Slider videoPositionSlider;
     bool displaySliderTime = false;
     double sliderTime;
+
+    DateTime startingDateTime;
 
     public void SetNewTrackedItemsArray(List <TrackedItem> newItems)
     {
@@ -250,6 +253,11 @@ public class ControlVideo : MonoBehaviour
     {
         displaySliderTime = true;
         sliderTime = GetTimeBasedOnPercentage(sliderValue);
+    }
+
+    public void SetStartingDateAndTime(DateTime startTime)
+    {
+        startingDateTime = startTime;
     }
 
     // Start is called before the first frame update

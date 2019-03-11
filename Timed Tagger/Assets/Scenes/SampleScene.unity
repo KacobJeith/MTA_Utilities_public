@@ -304,8 +304,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -159.15, y: 79.02}
-  m_SizeDelta: {x: -515.27, y: -416.04}
+  m_AnchoredPosition: {x: -159.15, y: 73.2}
+  m_SizeDelta: {x: -515.27, y: -404.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &66235868
 MonoBehaviour:
@@ -585,9 +585,9 @@ RectTransform:
   m_Father: {fileID: 66235867}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -6.2630043, y: -60.3}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 136.11, y: -171.2}
   m_SizeDelta: {x: 249.12, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &110302985
@@ -681,6 +681,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b110ac298ab75d34285186da82dc8d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RealTimeDialog: {fileID: 66235866}
+  InputText: {fileID: 427089369}
+  theVideoController: {fileID: 907197794}
+  InstructionText: {fileID: 556974634}
 --- !u!1 &136211008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,10 +1024,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 313714031}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd8f026003adf8c4291f50ccb0661552, type: 3}
+  m_Script: {fileID: 11500000, guid: e9f9721a33917a94c9b9123d63e19b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  videoController: {fileID: 907197794}
+  RealTimeDialog: {fileID: 66235866}
 --- !u!114 &313714034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1590,7 +1594,7 @@ GameObject:
   - component: {fileID: 556974635}
   - component: {fileID: 556974634}
   m_Layer: 5
-  m_Name: Instructions
+  m_Name: Time Instructions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1612,8 +1616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 136.1, y: -69.4}
-  m_SizeDelta: {x: 249.13, y: 35.570007}
+  m_AnchoredPosition: {x: 136.1, y: -82.88}
+  m_SizeDelta: {x: 249.13, y: 62.52}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556974634
 MonoBehaviour:
@@ -1637,10 +1641,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 16
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -1648,7 +1652,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Set the real time from the video on a 24 hour clock (EST) in hh:mm:ss form
+  m_Text: Set the real date and time of the video. Standard formats like mm/dd/yyyy
+    hh:mm:ss will work.
 --- !u!222 &556974635
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2410,7 +2415,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter Time of Day...
+  m_Text: Enter Date and Time...
 --- !u!222 &728724048
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4550,7 +4555,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1607093719}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a09b7c41d369164a99c1b991994fdaf, type: 3}
   m_Name: 
@@ -5632,7 +5637,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Set Time of Day
+  m_Text: Set Date and Time
 --- !u!222 &1909581447
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5678,7 +5683,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 136.10199, y: -108.4}
+  m_AnchoredPosition: {x: 136.1, y: -134}
   m_SizeDelta: {x: 249.12, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1927045218
