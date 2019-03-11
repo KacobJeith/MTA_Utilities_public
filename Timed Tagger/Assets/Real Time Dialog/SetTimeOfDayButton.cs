@@ -46,6 +46,9 @@ public class SetTimeOfDayButton : MonoBehaviour, IPointerClickHandler
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Return))
+        {
+            OnPointerClick(null);
+        }
     }
 }
