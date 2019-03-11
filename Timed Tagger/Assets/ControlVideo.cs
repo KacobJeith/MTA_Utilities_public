@@ -84,7 +84,8 @@ public class ControlVideo : MonoBehaviour
         {
             for (int i = 0; i < TrackedItems.Count; i++)
             {
-                file.WriteLine(TrackedItems[i].GetTime() + "," + (int)TrackedItems[i].GetState());
+                DateTime currentDateTimeToWrite = startingDateTime + new TimeSpan(0, 0, 0, 0, (int)(TrackedItems[i].GetTime() * 1000));
+                file.WriteLine(currentDateTimeToWrite + "," + TrackedItems[i].GetTime() + "," + (int)TrackedItems[i].GetState() + "," + StateNameStrings[(int)TrackedItems[i].GetState()]);
             }
         }
     }
