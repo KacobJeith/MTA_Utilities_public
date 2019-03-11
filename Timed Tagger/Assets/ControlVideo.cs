@@ -288,6 +288,6 @@ public class ControlVideo : MonoBehaviour
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
         SetSliderPosition();
         StateText.text = ((int)currentState).ToString() + " : " + StateNameStrings[(int)currentState];
-        DateTimeIndicator.text =  startingDateTime.ToString();
+        DateTimeIndicator.text =  (startingDateTime + new TimeSpan(0, 0, (int)theVideoPlayer.time)).ToString();
     }
 }
