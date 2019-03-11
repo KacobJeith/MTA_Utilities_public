@@ -47,15 +47,24 @@ public class LoadVideoData : MonoBehaviour, IPointerClickHandler
 
             List<TrackedItem> loadedItems = new List<TrackedItem>();
 
+            bool TimeSet = false;
             // Read the file and display it line by line.  
             System.IO.StreamReader file = new System.IO.StreamReader(filePath);
             while ((line = file.ReadLine()) != null)
             {
                 string[] splitLine = line.Split(',');
 
-                if (splitLine.Length == 2)
+                if (splitLine.Length == 4)
                 {
-                    loadedItems.Add(new TrackedItem(GetStateFromString(splitLine[1]), GetDoubleFromString(splitLine[0])));
+                    double currentSeconds = GetDoubleFromString(splitLine[1]);
+                    ControlVideo.StateNames currentState = GetStateFromString(splitLine[2]);
+
+                    if (!TimeSet)
+                    {
+                        videoController.SetStartingDateAndTime(DateTime.Parse(splitLine[0]) - new TimeSpan(0, 0, (int)currentSeconds));
+                    }
+
+                    loadedItems.Add(new TrackedItem(currentState, currentSeconds));
                 }
                 else
                 {
