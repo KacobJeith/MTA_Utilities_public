@@ -67,6 +67,8 @@
     <Compile Include="Assets\HandleTimeSlide.cs" />
     <Compile Include="Assets\LoadVideoData.cs" />
     <Compile Include="Assets\PlayPauseButton.cs" />
+    <Compile Include="Assets\Real Time Dialog\OpenRealTimeDialog.cs" />
+    <Compile Include="Assets\Real Time Dialog\SetTimeOfDayButton.cs" />
     <Compile Include="Assets\SaveCurrentData.cs" />
     <Compile Include="Assets\SetStateScript.cs" />
     <Compile Include="Assets\SetTimeButton.cs" />
