@@ -55,6 +55,8 @@ public class ControlVideo : MonoBehaviour
 
     DateTime startingDateTime;
 
+    public Text DateTimeIndicator;
+
     public void SetNewTrackedItemsArray(List <TrackedItem> newItems)
     {
         TrackedItems = newItems;
@@ -263,6 +265,8 @@ public class ControlVideo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        startingDateTime = new DateTime();
+
         SystemOptions = new CSVOptionParser("VideoPlayerOptions.csv");
 
         Screen.SetResolution(800, 600, false);
@@ -283,5 +287,6 @@ public class ControlVideo : MonoBehaviour
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
         SetSliderPosition();
         StateText.text = ((int)currentState).ToString() + " : " + StateNameStrings[(int)currentState];
+        DateTimeIndicator.text =  startingDateTime.ToString();
     }
 }
