@@ -14,10 +14,7 @@ class BusData:
 		self.stateNumber = stateNumber
 		self.stateName = stateName
 
-def getCSVData() :
-
-  fname = args.csv
-
+def getCSVData(fname) :
   BusDataList = []
 
   with open(fname, 'r') as f:
@@ -29,7 +26,7 @@ def getCSVData() :
   
   return BusDataList
 
-def labelVideo() :
+def labelVideo(busdata) :
   
   vidcap = cv2.VideoCapture(args.video)
   success,image = vidcap.read()
@@ -43,19 +40,24 @@ def labelVideo() :
       os.mkdir(folder)
 
   count = 0
-  while count < 10:
+  while count < 3000:
     savepath = "./{}/frame_{}.jpg".format(filename, count)
     # cv2.imwrite(savepath, image)     # save frame as JPEG file      
     success,image = vidcap.read()
-    if (labelFrame == '')
+    busdata, thisLabel = labelFrame(count, busdata)
+    print(thisLabel)
     count += 1
 
 def labelFrame(frameNumber, busdata) :
-  if (frameNumber / 30 > busdata[0].relativeTime ) {
-    print('test')
-  } else {
-    print('trust')
-  }
 
-busData = getCSVData()
-labelVideo()
+  if len(busdata) == 1 :
+    return busdata, busdata[0].stateName
+
+  if frameNumber / 30 > busdata[1].relativeTime  : 
+    busdata.pop(0)
+  
+  return busdata, busdata[0].stateName
+  
+
+busData = getCSVData(args.csv)
+labelVideo(busData)
