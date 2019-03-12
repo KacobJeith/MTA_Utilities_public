@@ -32,11 +32,13 @@ def labelVideo(busdata, datasetName, vidName) :
   vidcap = cv2.VideoCapture(args.video)
   success,image = vidcap.read()
   
+  fps = vidcap.get(cv2.CAP_PROP_FPS)
+  print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+  
   count = 0
-  while success:
-    # 
+  while success :
     success,image = vidcap.read()
-    busdata, thisLabel = labelFrame(count, busdata)
+    busdata, thisLabel = labelFrame(count, busdata, fps)
     print(thisLabel)
     checkFolders(datasetName, thisLabel)
     savepath = "./{}/{}/{}_{}.jpg".format(datasetName, thisLabel, vidName, count)
@@ -54,17 +56,17 @@ def checkFolders(datasetName, label) :
   if (os.path.isdir(folder) == False) :
       os.mkdir(folder)
 
-def labelFrame(frameNumber, busdata) :
+def labelFrame(frameNumber, busdata, fps) :
 
   if len(busdata) == 1 :
     return busdata, busdata[0].stateName
 
-  if frameNumber / 30 > busdata[1].relativeTime  : 
+  if frameNumber / fps > busdata[1].relativeTime  : 
     busdata.pop(0)
   
   return busdata, busdata[0].stateName
 
-vidName = os.path.basename(args.video).split('.')[0]
 
+vidName = os.path.basename(args.video).split('.')[0]
 busData = getCSVData(args.csv)
 labelVideo(busData, args.dataset_name, vidName)
