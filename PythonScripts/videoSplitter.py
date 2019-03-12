@@ -33,7 +33,7 @@ def labelVideo(busdata, datasetName, vidName) :
   success,image = vidcap.read()
   
   count = 0
-  while count < 300:
+  while success:
     # 
     success,image = vidcap.read()
     busdata, thisLabel = labelFrame(count, busdata)
