@@ -27,7 +27,7 @@ def getCSVData(fname) :
   
   return BusDataList
 
-def labelVideo(busdata, datasetName) :
+def labelVideo(busdata, datasetName, vidName) :
   
   vidcap = cv2.VideoCapture(args.video)
   success,image = vidcap.read()
@@ -39,12 +39,12 @@ def labelVideo(busdata, datasetName) :
     busdata, thisLabel = labelFrame(count, busdata)
     print(thisLabel)
     checkFolders(datasetName, thisLabel)
-    savepath = "./{}/{}/frame_{}.jpg".format(datasetName, thisLabel, count)
+    savepath = "./{}/{}/{}_{}.jpg".format(datasetName, thisLabel, vidName, count)
     cv2.imwrite(savepath, image)     # save frame as JPEG file      
     count += 1
 
 def checkFolders(datasetName, label) :
-  
+
   datasetLocation = "./{}".format(datasetName)
   folder = "./{}/{}".format(datasetName, label)
 
@@ -63,7 +63,8 @@ def labelFrame(frameNumber, busdata) :
     busdata.pop(0)
   
   return busdata, busdata[0].stateName
-  
+
+vidName = os.path.basename(args.video).split('.')[0]
 
 busData = getCSVData(args.csv)
-labelVideo(busData, args.dataset_name)
+labelVideo(busData, args.dataset_name, vidName)
