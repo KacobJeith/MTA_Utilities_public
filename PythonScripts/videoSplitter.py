@@ -4,6 +4,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--video', type=str, required=True, help='video file')
+parser.add_argument('--dataset_name', type=str, required=True, help='name of the dataset to save these labels to')
 parser.add_argument('--csv', type=str, required=True, help='csv label file')
 args = parser.parse_args()
 
@@ -22,31 +23,36 @@ def getCSVData(fname) :
       for x in range(0, len(content)) :
         splitValue = content[x].split(',')
         if(len(splitValue) == 4) :
-          BusDataList.append(BusData(splitValue[0], float(splitValue[1]), int(splitValue[2]), splitValue[3]))
+          BusDataList.append(BusData(splitValue[0], float(splitValue[1]), int(splitValue[2]), splitValue[3].split('\n')[0]))
   
   return BusDataList
 
-def labelVideo(busdata) :
+def labelVideo(busdata, datasetName) :
   
   vidcap = cv2.VideoCapture(args.video)
   success,image = vidcap.read()
-
-  filename = args.video.split('.')[0]
-  print('Watching ', filename)
-
-  folder = "./{}".format(filename)
-
-  if (os.path.isdir(folder) == False) :
-      os.mkdir(folder)
-
+  
   count = 0
-  while count < 3000:
-    savepath = "./{}/frame_{}.jpg".format(filename, count)
-    # cv2.imwrite(savepath, image)     # save frame as JPEG file      
+  while count < 300:
+    # 
     success,image = vidcap.read()
     busdata, thisLabel = labelFrame(count, busdata)
     print(thisLabel)
+    checkFolders(datasetName, thisLabel)
+    savepath = "./{}/{}/frame_{}.jpg".format(datasetName, thisLabel, count)
+    cv2.imwrite(savepath, image)     # save frame as JPEG file      
     count += 1
+
+def checkFolders(datasetName, label) :
+  
+  datasetLocation = "./{}".format(datasetName)
+  folder = "./{}/{}".format(datasetName, label)
+
+  if (os.path.isdir(datasetLocation) == False) :
+      os.mkdir(datasetLocation)
+
+  if (os.path.isdir(folder) == False) :
+      os.mkdir(folder)
 
 def labelFrame(frameNumber, busdata) :
 
@@ -60,4 +66,4 @@ def labelFrame(frameNumber, busdata) :
   
 
 busData = getCSVData(args.csv)
-labelVideo(busData)
+labelVideo(busData, args.dataset_name)
