@@ -29,7 +29,7 @@ def getCSVData() :
   
   return BusDataList
 
-def readVideo() :
+def labelVideo() :
   
   vidcap = cv2.VideoCapture(args.video)
   success,image = vidcap.read()
@@ -43,12 +43,19 @@ def readVideo() :
       os.mkdir(folder)
 
   count = 0
-  while success:
+  while count < 10:
     savepath = "./{}/frame_{}.jpg".format(filename, count)
     # cv2.imwrite(savepath, image)     # save frame as JPEG file      
     success,image = vidcap.read()
-  #   print('Read a new frame: ', success)
+    if (labelFrame == '')
     count += 1
 
+def labelFrame(frameNumber, busdata) :
+  if (frameNumber / 30 > busdata[0].relativeTime ) {
+    print('test')
+  } else {
+    print('trust')
+  }
 
-readVideo()
+busData = getCSVData()
+labelVideo()
