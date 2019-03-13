@@ -55,11 +55,16 @@ def read_tensor_from_image(image,
                             input_mean=0,
                             input_std=255):
 
-    small = cv2.resize(image, (299, 299)) 
-    data = np.asarray(small, dtype="int32" )
-    image = data[np.newaxis, ...]
-    return image
+    img_str = cv2.imencode('.jpg', image)[1].tostring()
+    image_reader = tf.image.decode_jpeg(img_str)
+    float_caster = tf.cast(image_reader, tf.float32)
+    dims_expander = tf.expand_dims(float_caster, 0)
+    resized = tf.image.resize_bilinear(dims_expander, [input_height, input_width])
+    normalized = tf.divide(tf.subtract(resized, [input_mean]), [input_std])
+    # sess = tf.Session()
+    # result = sess.run(normalized)
 
+    return normalized
 
 def load_labels(label_file):
   label = []
@@ -68,52 +73,51 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
-def get_frame_from_video(video) :
-    vidcap = cv2.VideoCapture(args.video)
-    success,image = vidcap.read()
 
-    return image
-
-def display_image(image) :
-    
-    cv2.imshow('',image)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def predictOnImage(image):
-
-    graph = load_graph(args.graph)
-    t = read_tensor_from_image(
-        image,
-        input_height=args.input_height,
-        input_width=args.input_width,
-        input_mean=args.input_mean,
-        input_std=args.input_std)
-
-    # tfImage = np.array(openCVImage)[:, :, 0:3]
-
+def predictOnVideo() :
+    labels = load_labels(args.labels)
     input_name = "import/" + args.input_layer
     output_name = "import/" + args.output_layer
+
+    graph = load_graph(args.graph)
     input_operation = graph.get_operation_by_name(input_name)
     output_operation = graph.get_operation_by_name(output_name)
 
+    vidcap = cv2.VideoCapture(args.video)
+    success,image = vidcap.read()
+    count = 0
+
+    busstop = 0
+    moving = 0
+
+
     with tf.Session(graph=graph) as sess:
-        results = sess.run(output_operation.outputs[0], {
-            input_operation.outputs[0]: t
-        })
+        while success :
+            print('FRAME: ', count)
+            success,image = vidcap.read()
+            # t = read_tensor_from_image(image)
+            normalized = read_tensor_from_image(image)
+            t = sess.run(normalized)
 
-    results = np.squeeze(results)
+            results = sess.run(output_operation.outputs[0], {
+                input_operation.outputs[0]: t
+            })
 
-    top_k = results.argsort()[-5:][::-1]
-    labels = load_labels(args.labels)
+            results = np.squeeze(results)
+            print(np.where(results == np.amax(results)))
+              
 
-    for i in top_k:
-        print(labels[i], results[i])
+            top_k = results.argsort()[-5:][::-1]
 
-image = get_frame_from_video(args.video)
+            for i in top_k:
+                print(labels[i], results[i])
+
+            count += 1
+
+# image = get_frame_from_video(args.video)
 # display_image(image)
-predictOnImage(image)
+# predictOnImage(image)
+predictOnVideo()
 
 
 
