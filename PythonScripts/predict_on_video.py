@@ -49,33 +49,11 @@ def load_graph(model_file):
 
   return graph
 
-
-def read_tensor_from_image(image,
+def preprocess_image(image,
                             input_height=299,
                             input_width=299,
                             input_mean=0,
                             input_std=255):
-    # goal array shape:[?, 299, 299, 3]
-    # 
-
-    img_str = cv2.imencode('.jpg', image)[1].tostring()
-    image_reader = tf.image.decode_jpeg(img_str)
-    float_caster = tf.cast(image_reader, tf.float32)
-    dims_expander = tf.expand_dims(float_caster, 0)
-    resized = tf.image.resize_bilinear(dims_expander, [input_height, input_width])
-    normalized = tf.divide(tf.subtract(resized, [input_mean]), [input_std])
-    # sess = tf.Session()
-    # result = sess.run(normalized)
-
-    return normalized
-
-def read_tensor_from_image_np(image,
-                            input_height=299,
-                            input_width=299,
-                            input_mean=0,
-                            input_std=255):
-    # goal array shape:[?, 299, 299, 3]
-    # 
     
     img2= cv2.resize(image,dsize=(299,299), interpolation = cv2.INTER_CUBIC)
     np_image_data = np.asarray(img2)
@@ -114,9 +92,7 @@ def predictOnVideo() :
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
             print('FRAME: ', frameCounter)
             success,image = vidcap.read()
-            # t = read_tensor_from_image(image)
-            t = read_tensor_from_image_np(image)
-            # t = sess.run(normalized)
+            t = preprocess_image(image)
 
             results = sess.run(output_operation.outputs[0], {
                 input_operation.outputs[0]: t
@@ -135,6 +111,7 @@ def predictOnVideo() :
 # image = get_frame_from_video(args.video)
 # display_image(image)
 # predictOnImage(image)
+
 predictOnVideo()
 
 
