@@ -55,6 +55,8 @@ def read_tensor_from_image(image,
                             input_width=299,
                             input_mean=0,
                             input_std=255):
+    # goal array shape:[?, 299, 299, 3]
+    # 
 
     img_str = cv2.imencode('.jpg', image)[1].tostring()
     image_reader = tf.image.decode_jpeg(img_str)
@@ -66,6 +68,21 @@ def read_tensor_from_image(image,
     # result = sess.run(normalized)
 
     return normalized
+
+def read_tensor_from_image_np(image,
+                            input_height=299,
+                            input_width=299,
+                            input_mean=0,
+                            input_std=255):
+    # goal array shape:[?, 299, 299, 3]
+    # 
+    
+    img2= cv2.resize(image,dsize=(299,299), interpolation = cv2.INTER_CUBIC)
+    np_image_data = np.asarray(img2)
+    np_final = np.expand_dims(np_image_data,axis=0)
+    np_image_data = cv2.normalize(np_final.astype('float'), None, -0.5, .5, cv2.NORM_MINMAX)
+
+    return np_image_data
 
 def load_labels(label_file):
   label = []
@@ -98,20 +115,20 @@ def predictOnVideo() :
             print('FRAME: ', frameCounter)
             success,image = vidcap.read()
             # t = read_tensor_from_image(image)
-            normalized = read_tensor_from_image(image)
-            t = sess.run(normalized)
+            t = read_tensor_from_image_np(image)
+            # t = sess.run(normalized)
 
             results = sess.run(output_operation.outputs[0], {
                 input_operation.outputs[0]: t
             })
 
             results = np.squeeze(results)
-            print(np.where(results == np.amax(results)))
+            # print(np.where(results == np.amax(results)))
               
-            top_k = results.argsort()[-5:][::-1]
+            # top_k = results.argsort()[-5:][::-1]
 
-            for i in top_k:
-                print(labels[i], results[i])
+            # for i in top_k:
+            #     print(labels[i], results[i])
 
             frameCounter += args.skip_frames + 1
 
