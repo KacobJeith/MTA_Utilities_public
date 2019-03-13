@@ -25,6 +25,7 @@ import tensorflow as tf
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--video", type=str, required=True, help="video to be processed")
+parser.add_argument("--skip_frames", type=int, default=9, help="name of file containing labels")
 parser.add_argument("--graph", type=str, default='/tmp/output_graph.pb', help="graph/model to be executed")
 parser.add_argument("--labels", type=str, default='/tmp/output_labels.txt', help="name of file containing labels")
 parser.add_argument("--input_layer", type=str, default='Placeholder', help="name of input layer")
@@ -85,7 +86,7 @@ def predictOnVideo() :
 
     vidcap = cv2.VideoCapture(args.video)
     success,image = vidcap.read()
-    count = 0
+    frameCounter = 0
 
     busstop = 0
     moving = 0
@@ -93,7 +94,8 @@ def predictOnVideo() :
 
     with tf.Session(graph=graph) as sess:
         while success :
-            print('FRAME: ', count)
+            vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
+            print('FRAME: ', frameCounter)
             success,image = vidcap.read()
             # t = read_tensor_from_image(image)
             normalized = read_tensor_from_image(image)
@@ -106,13 +108,12 @@ def predictOnVideo() :
             results = np.squeeze(results)
             print(np.where(results == np.amax(results)))
               
-
             top_k = results.argsort()[-5:][::-1]
 
             for i in top_k:
                 print(labels[i], results[i])
 
-            count += 1
+            frameCounter += args.skip_frames + 1
 
 # image = get_frame_from_video(args.video)
 # display_image(image)
