@@ -89,9 +89,6 @@ def predictOnVideo() :
 
     with tf.Session(graph=graph) as sess:
         while success :
-            vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
-            print('FRAME: ', frameCounter)
-            success,image = vidcap.read()
             t = preprocess_image(image)
 
             results = sess.run(output_operation.outputs[0], {
@@ -107,6 +104,9 @@ def predictOnVideo() :
             #     print(labels[i], results[i])
 
             frameCounter += args.skip_frames + 1
+            vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
+            print('FRAME: ', frameCounter)
+            success,image = vidcap.read()
 
 # image = get_frame_from_video(args.video)
 # display_image(image)
