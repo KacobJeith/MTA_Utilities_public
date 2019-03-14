@@ -38,6 +38,7 @@ parser.add_argument("--input_height", type=int, default=299, help="input height"
 parser.add_argument("--input_width", type=int, default=299, help="input width")
 parser.add_argument("--input_mean", type=int,  default=0, help="input mean")
 parser.add_argument("--input_std", type=int,  default=255, help="input std")
+parser.add_argument("--result_prefix", type=str, default='', help="Prefix for the result csv name")
 
 args = parser.parse_args()
 
@@ -103,7 +104,15 @@ def predictOnVideo() :
     frameCounter = 0
     startTime =  dateparser.parse(args.datetime)
 
-    csvname = os.path.basename(args.video).split('.')[0] + '_predictions.csv'
+    prefix = args.result_prefix
+
+    if prefix is not '' :
+      prefix += '_'
+
+    csvname = 'predictions/' + prefix + os.path.basename(args.video).split('.')[0] + '_predictions.csv'
+
+    if (os.path.isdir('predictions/') == False) :
+      os.mkdir('predictions') 
 
     with tf.Session(graph=graph) as sess, open(csvname, mode='w') as results_csv:
 
