@@ -74,17 +74,19 @@ def load_labels(label_file):
 
 def getTimeOfFrame(startTime, frameCount, fps) :
 
-    relativeTime = round(frameCount/fps)
+    relativeTime = frameCount/fps
     offset = startTime + datetime.timedelta(0,relativeTime)
-    formatted = offset.strftime("%m/%d/%Y %I:%M:%S %p")
-    
-    return formatted, relativeTime
+    formatted = offset.strftime("%m/%d/%Y %I:%M:%S.%f")[:-4] + offset.strftime(" %p")
+    relTimeStr = "%.2f" % round(relativeTime,2)
+    return formatted, relTimeStr
 
 def writeResultToCSV(results_writer, startTime, frameCounter, fps, results, labels) :
     data_time, data_relativeTime = getTimeOfFrame(startTime, frameCounter, fps)
     data_prediction = results.tolist().index(np.amax(results))
     data_label = labels[data_prediction]
     results_writer.writerow([data_time, data_relativeTime, data_prediction, data_label])
+
+    return data_label
 
 def predictOnVideo() :
     labels = load_labels(args.labels)
@@ -115,11 +117,11 @@ def predictOnVideo() :
             })
 
             results = np.squeeze(results)
-            writeResultToCSV(results_writer, startTime, frameCounter, fps, results, labels)
+            prediction = writeResultToCSV(results_writer, startTime, frameCounter, fps, results, labels)
             
             frameCounter += args.skip_frames + 1
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
-            print('FRAME: ', frameCounter)
+            print('FRAME {} : {}'.format(frameCounter, prediction))
             success,image = vidcap.read()
 
 
