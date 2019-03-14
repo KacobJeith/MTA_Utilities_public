@@ -21,10 +21,14 @@ import argparse
 import cv2
 import numpy as np
 import tensorflow as tf
-
+import csv
+import os
+import dateparser
+import datetime
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--video", type=str, required=True, help="video to be processed")
+parser.add_argument("--datetime", type=str, default='none', help="Start date and time of the video, for output result csv. (Format: 2019-03-13 17:14:22)")
 parser.add_argument("--skip_frames", type=int, default=9, help="name of file containing labels")
 parser.add_argument("--graph", type=str, default='/tmp/output_graph.pb', help="graph/model to be executed")
 parser.add_argument("--labels", type=str, default='/tmp/output_labels.txt', help="name of file containing labels")
@@ -36,7 +40,6 @@ parser.add_argument("--input_mean", type=int,  default=0, help="input mean")
 parser.add_argument("--input_std", type=int,  default=255, help="input std")
 
 args = parser.parse_args()
-
 
 def load_graph(model_file):
   graph = tf.Graph()
@@ -69,6 +72,19 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
+def getTimeOfFrame(startTime, frameCount, fps) :
+
+    relativeTime = round(frameCount/fps)
+    offset = startTime + datetime.timedelta(0,relativeTime)
+    formatted = offset.strftime("%m/%d/%Y %I:%M:%S %p")
+    
+    return formatted, relativeTime
+
+def writeResultToCSV(results_writer, startTime, frameCounter, fps, results, labels) :
+    data_time, data_relativeTime = getTimeOfFrame(startTime, frameCounter, fps)
+    data_prediction = results.tolist().index(np.amax(results))
+    data_label = labels[data_prediction]
+    results_writer.writerow([data_time, data_relativeTime, data_prediction, data_label])
 
 def predictOnVideo() :
     labels = load_labels(args.labels)
@@ -80,14 +96,17 @@ def predictOnVideo() :
     output_operation = graph.get_operation_by_name(output_name)
 
     vidcap = cv2.VideoCapture(args.video)
+    fps = vidcap.get(cv2.CAP_PROP_FPS)
     success,image = vidcap.read()
     frameCounter = 0
+    startTime =  dateparser.parse(args.datetime)
 
-    busstop = 0
-    moving = 0
+    csvname = os.path.basename(args.video).split('.')[0] + '_predictions.csv'
 
+    with tf.Session(graph=graph) as sess, open(csvname, mode='w') as results_csv:
 
-    with tf.Session(graph=graph) as sess:
+        results_writer = csv.writer(results_csv, delimiter=',', quotechar='"', lineterminator = '\n', quoting=csv.QUOTE_MINIMAL)
+
         while success :
             t = preprocess_image(image)
 
@@ -96,23 +115,13 @@ def predictOnVideo() :
             })
 
             results = np.squeeze(results)
-            # print(np.where(results == np.amax(results)))
-              
-            # top_k = results.argsort()[-5:][::-1]
-
-            # for i in top_k:
-            #     print(labels[i], results[i])
-
+            writeResultToCSV(results_writer, startTime, frameCounter, fps, results, labels)
+            
             frameCounter += args.skip_frames + 1
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, frameCounter)
             print('FRAME: ', frameCounter)
             success,image = vidcap.read()
 
-# image = get_frame_from_video(args.video)
-# display_image(image)
-# predictOnImage(image)
 
 predictOnVideo()
-
-
 
