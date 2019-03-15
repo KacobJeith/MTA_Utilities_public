@@ -30,7 +30,7 @@ This command tells your bash to execute with the python context set up for GPU. 
 ~(tf_gpu)$ 
 ```
 
-##### 2. Split the video 
+##### 2. Split the video (videoSplitter.py)
 First you need to convert the video into labeled frames. The script for this is MTA_Utilities/PythonScripts/videoSplitter.py. For a list of input parameters, type python videoSplitter.py -h
 ```
 ~(tf_gpu)$ python videoSplitter.py -h
@@ -48,7 +48,7 @@ optional arguments:
 ```
 All you need to do to run this script is input a path to a video file, the name of a folder to save the labeled frames to, and the path to the CSV file indicating all the labels for the frames. 
 
-### Training the classifier
+### Training the classifier (retrain.py)
 Now that you have a folder with labeled frames, you can train your KNN model. To keep things efficient and simple, we're currently using a really nice google script to handle all the CV retraining, located in the file retrain.py. Running --help on this file is a bit more intimidating:
 
 ```
@@ -153,7 +153,52 @@ But fear not, all you need to input is the path to the labeled image frames! Her
 This will launch a pretty lengthy training process. For best results, make sure that for each label you have at minimum 20 example images. I've seen errors if there are fewer than that. The output from retrain.py is shiny new model! There are two files that you will need: output_graph.pb, and output_labels.txt. These are saved to the path C:/tmp/output_graph.pb and C:/tmp/output_labels.txt. I recommend copying these off to a folder in your working directory, because the next time you retrain these files will be overwritten. It's possible that you might have better luck then me trying to use some of the many optional parameters to save your models to other locations
 
 
-### Using the model
+### Using the model (predict_on_video.py)
 
+Now that you have a new classifier, it's time to use it! The script for this is predict_on_video.py 
+
+This is probably the trickiest to use from command line, and has the most pseudo-required parameters you'll need to input: 
+
+```
+~(tf_gpu)$ python predict_on_video.py -h
+usage: predict_on_video.py [-h] --video VIDEO [--datetime DATETIME]
+                           [--skip_frames SKIP_FRAMES] [--graph GRAPH]
+                           [--labels LABELS] [--input_layer INPUT_LAYER]
+                           [--output_layer OUTPUT_LAYER]
+                           [--input_height INPUT_HEIGHT]
+                           [--input_width INPUT_WIDTH]
+                           [--input_mean INPUT_MEAN] [--input_std INPUT_STD]
+                           [--result_prefix RESULT_PREFIX]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --video VIDEO         video to be processed
+  --datetime DATETIME   Start date and time of the video, for output result
+                        csv. (Format: 2019-03-13 17:14:22)
+  --skip_frames SKIP_FRAMES
+                        name of file containing labels
+  --graph GRAPH         graph/model to be executed
+  --labels LABELS       name of file containing labels
+  --input_layer INPUT_LAYER
+                        name of input layer
+  --output_layer OUTPUT_LAYER
+                        name of output layer
+  --input_height INPUT_HEIGHT
+                        input height
+  --input_width INPUT_WIDTH
+                        input width
+  --input_mean INPUT_MEAN
+                        input mean
+  --input_std INPUT_STD
+                        input std
+  --result_prefix RESULT_PREFIX
+                        Prefix for the result csv name
+```
+
+To run this, you'll need three paths, one to your video, the labels, the model (here called the GRAPH). The --datetime argument is also a pretty important value to input, though not technically required. It indicates the start time of your video, so that the script can save the real timestamps from the video rather than only relative times. The output from the model is a CSV that is formatted identically to the CSV format output by Dylan's Labeling UI. 
+
+There are two helpful arguments that are optional though strongly recommended. --skip_frames and --result_prefix. --skip_frames allows you to process every nth frame, cutting the process time by orders of magnitude depending on the value. It looks like the --help entry was not updated for --skip_frames in my hurried development state. This might be a good thing to update for the next person to touch this file. I recommend using a value of at least 6 or 7, which at 15 frames per second for MTA footage, results in a sample rate of roughly twice a second. I think this is ample for our purposes, perhaps still a bit frequent. 
+
+--result_prefix is helpful for avoiding prediction result overwrites, if that matters to you. The CSV outputs are normally saved to the path ./predictions/\[NAME_OF_VIDEO\]\_predictions.csv relative to your working directory. Using this argument changes this to ./predictions/\[PREFIX\]\_\[NAME_OF_VIDEO\]\_predictions.csv
 
 
