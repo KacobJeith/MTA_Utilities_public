@@ -20,7 +20,7 @@ First, you'll need to set up a virtual environment to execute your python script
 
 
 
-##### 1. Activate the GPU-enabled  ivrtual environment
+##### 1. Activate the GPU-enabled  virtual environment
 
 ```
 ~$ activate tf_gpu
@@ -31,7 +31,22 @@ This command tells your bash to execute with the python context set up for GPU. 
 ```
 
 ##### 2. Split the video 
-First you need to convert the video into labeled frames. The script for this is MTA_Utilities/PythonScripts/videoSplitter.py. 
+First you need to convert the video into labeled frames. The script for this is MTA_Utilities/PythonScripts/videoSplitter.py. For a list of input parameters, type python videoSplitter.py -h
+```
+~(tf_gpu)$ python videoSplitter.py -h
+usage: videoSplitter.py [-h] --video VIDEO --dataset_name DATASET_NAME --csv
+                        CSV
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --video VIDEO         video file
+  --dataset_name DATASET_NAME
+                        name of the dataset to save these labels to
+  --csv CSV             csv label file
+
+
+```
+All you need to do to run this script is input a path to a video file, the name of a folder to save the labeled frames to, and the path to the CSV file indicating all the labels for the frames. 
 
 ### Training the classifier
 
