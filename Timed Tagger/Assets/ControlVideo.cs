@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
+using System;
 
 public class TrackedItem
 {
@@ -48,6 +49,14 @@ public class ControlVideo : MonoBehaviour
 
     public List<GameObject> StateButtons;
 
+    public Slider videoPositionSlider;
+    bool displaySliderTime = false;
+    double sliderTime;
+
+    DateTime startingDateTime;
+
+    public Text DateTimeIndicator;
+
     public void SetNewTrackedItemsArray(List <TrackedItem> newItems)
     {
         TrackedItems = newItems;
@@ -75,7 +84,8 @@ public class ControlVideo : MonoBehaviour
         {
             for (int i = 0; i < TrackedItems.Count; i++)
             {
-                file.WriteLine(TrackedItems[i].GetTime() + "," + (int)TrackedItems[i].GetState());
+                DateTime currentDateTimeToWrite = startingDateTime + new TimeSpan(0, 0, 0, 0, (int)(TrackedItems[i].GetTime() * 1000));
+                file.WriteLine(currentDateTimeToWrite + "," + TrackedItems[i].GetTime() + "," + (int)TrackedItems[i].GetState() + "," + StateNameStrings[(int)TrackedItems[i].GetState()]);
             }
         }
     }
@@ -125,6 +135,18 @@ public class ControlVideo : MonoBehaviour
     public void SetVideoTime(double newTime)
     {
         theVideoPlayer.time = newTime;
+    }
+
+    double GetTimeBasedOnPercentage(float percentage)
+    {
+        double newSeconds = (double)percentage * theVideoPlayer.length;
+        return newSeconds;
+    }
+
+    public void SetVideoTimeBasedOnPercentage(float percentage)
+    {
+        displaySliderTime = false;
+        theVideoPlayer.time = GetTimeBasedOnPercentage(percentage);
     }
 
     public void SetState(StateNames newState)
@@ -194,20 +216,58 @@ public class ControlVideo : MonoBehaviour
         return numberString;
     }
 
-    public string GetFormattedTime()
+    public string FormatTimeDouble(double time)
     {
-        double currentTime = theVideoPlayer.time;
-
-        int seconds = (int)currentTime % 60;
-        int minutes = ((int)currentTime % 3600) / 60;
-        int hours = ((int)currentTime / 3600);
+        int seconds = (int)time % 60;
+        int minutes = ((int)time % 3600) / 60;
+        int hours = ((int)time / 3600);
 
         return Get2DigitString(hours) + ":" + Get2DigitString(minutes) + ":" + Get2DigitString(seconds);
+    }
+
+    public string GetFormattedTime()
+    {
+        return FormatTimeDouble(theVideoPlayer.time);
+    }
+
+    public string GetDisplayTime()
+    {
+        if(displaySliderTime)
+        {
+            return FormatTimeDouble(sliderTime);
+        }
+        else
+        {
+            return GetFormattedTime();
+        }
+    }
+
+    void SetSliderPosition()
+    {
+        if(theVideoPlayer.length > 0 && !displaySliderTime)
+        {
+            float percentage = (float)(theVideoPlayer.time / theVideoPlayer.length);
+            videoPositionSlider.value = percentage;
+        }
+        
+    }
+
+    public void OnDragSlider(float sliderValue)
+    {
+        displaySliderTime = true;
+        sliderTime = GetTimeBasedOnPercentage(sliderValue);
+    }
+
+    public void SetStartingDateAndTime(DateTime startTime)
+    {
+        startingDateTime = startTime;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        startingDateTime = new DateTime();
+
         SystemOptions = new CSVOptionParser("VideoPlayerOptions.csv");
 
         Screen.SetResolution(800, 600, false);
@@ -224,8 +284,10 @@ public class ControlVideo : MonoBehaviour
     {
         DoOverwriteLogic();
         GetCurrentState();
-        videoTime.text = GetFormattedTime();
+        videoTime.text = GetDisplayTime();
         playbackSpeed.text = theVideoPlayer.playbackSpeed.ToString() + "x";
+        SetSliderPosition();
         StateText.text = ((int)currentState).ToString() + " : " + StateNameStrings[(int)currentState];
+        DateTimeIndicator.text =  (startingDateTime + new TimeSpan(0, 0, (int)theVideoPlayer.time)).ToString();
     }
 }
