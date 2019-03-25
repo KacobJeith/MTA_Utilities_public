@@ -7,6 +7,10 @@ class SingleObstruction:
 		self.state = state
 		self.curTime = curTime
 
+class MotionState:
+	def __init__(self, stateType, transitionFunction) :
+		self.stateType = stateType
+
 fname = sys.argv[1]
 
 BusDataList = []
@@ -34,6 +38,8 @@ with open(fname, 'r') as f:
     		#BusDataList.append(BusData(splitValue[0], float(splitValue[1]), int(splitValue[2]), splitValue[3]))
 
 
+
+## Capture The Information
 lastState = states[0]
 inObstruction = False
 
@@ -47,6 +53,7 @@ for x in range(1, len(speeds)) :
 
 	if acceleration > 0 :
 		if inObstruction :
+			singleObstructionEventList.append(SingleObstruction(currentSeverity, states[x], times[x]))
 			allObstructions.append(singleObstructionEventList)
 
 		inObstruction = False
@@ -66,6 +73,7 @@ for x in range(1, len(speeds)) :
 			inObstruction = True
 		
 
+## Print Things
 for x in range(0, len(allObstructions)) :
 	toPrintStr = ""
 	for y in range(0, len(allObstructions[x])) :
