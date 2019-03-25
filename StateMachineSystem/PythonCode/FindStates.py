@@ -2,9 +2,10 @@ import sys
 from datetime import datetime
 
 class SingleObstruction:
-	def __init__(self, severity, state) :
+	def __init__(self, severity, state, curTime) :
 		self.severity = severity
 		self.state = state
+		self.curTime = curTime
 
 fname = sys.argv[1]
 
@@ -12,6 +13,7 @@ BusDataList = []
 
 speeds = []
 states = []
+times = []
 
 readFirstLine = False
 
@@ -22,6 +24,7 @@ with open(fname, 'r') as f:
 
 		if readFirstLine :
 			#times.append(datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p'))
+			times.append(splitValue[0])
 			speeds.append(float(splitValue[2]))
 			states.append(int(splitValue[1]))
 		else :
@@ -55,7 +58,7 @@ for x in range(1, len(speeds)) :
 		currentSeverity += 1
 
 		if states[x] != lastState or not inObstruction :
-			singleObstructionEventList.append(SingleObstruction(currentSeverity, states[x]))
+			singleObstructionEventList.append(SingleObstruction(currentSeverity, states[x], times[x]))
 
 		lastState = states[x]
 
@@ -66,7 +69,7 @@ for x in range(1, len(speeds)) :
 for x in range(0, len(allObstructions)) :
 	toPrintStr = ""
 	for y in range(0, len(allObstructions[x])) :
-		toPrintStr += str(allObstructions[x][y].severity) + "," + str(allObstructions[x][y].state) + ":  "
+		toPrintStr += allObstructions[x][y].curTime + ",  " + str(allObstructions[x][y].severity) + "," + str(allObstructions[x][y].state) + ":  "
 		print(toPrintStr)
 
 
