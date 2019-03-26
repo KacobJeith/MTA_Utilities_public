@@ -1,4 +1,7 @@
 import glob   
+from DataTypes import Coordinate
+from DataTypes import ObstructionPeriod
+from DataTypes import GetObstructionPeriodFromString
 
 def IsOutputFile(filename) :
     fileNameSplit = filename.split("_")
@@ -11,8 +14,13 @@ def IsOutputFile(filename) :
 
     return False
 
+masterObstructionList = []
+
 path = './*.csv'  
 files=glob.glob(path)   
 for file in files:    
     if IsOutputFile(file) :
-        print(file)
+        with open(file, 'r') as f:
+            content = f.readlines()
+            for x in range(0, len(content)) :
+                masterObstructionList.append(GetObstructionPeriodFromString(content[x]))
