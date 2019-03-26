@@ -1,28 +1,13 @@
 import sys
 from datetime import datetime
+from DataTypes import Coordinate
+from DataTypes import ObstructionPeriod
 
 class SingleObstruction:
 	def __init__(self, severity, state, curTime) :
 		self.severity = severity
 		self.state = state
 		self.curTime = curTime
-
-class Coordinate:
-	def __init__(self, latitude, longitude) :
-		self.latitude = latitude
-		self.longitude = longitude
-
-class ObstructionPeriod : 
-	def __init__(self, severity, startTime, endTime, visionStates, coordinates, doorStates, headings, speeds, accelerations) :
-		self.severity = severity
-		self.startTime = startTime
-		self.endTime = endTime
-		self.visionStates = visionStates
-		self.coordinates = coordinates
-		self.doorStates = doorStates
-		self.headings = headings
-		self.speeds = speeds
-		self.accelerations = accelerations
 
 class MotionState:
 	#Motion State Enumeration
