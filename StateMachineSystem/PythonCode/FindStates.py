@@ -13,7 +13,7 @@ class Coordinate:
 		self.longitude = longitude
 
 class ObstructionPeriod : 
-	def __init__(self, severity, startTime, endTime, visionStates, coordinates, doorStates, headings) :
+	def __init__(self, severity, startTime, endTime, visionStates, coordinates, doorStates, headings, speeds, accelerations) :
 		self.severity = severity
 		self.startTime = startTime
 		self.endTime = endTime
@@ -21,6 +21,8 @@ class ObstructionPeriod :
 		self.coordinates = coordinates
 		self.doorStates = doorStates
 		self.headings = headings
+		self.speeds = speeds
+		self.accelerations = accelerations
 
 class MotionState:
 	#Motion State Enumeration
@@ -109,6 +111,8 @@ obstructionVisionStates = []
 obstructionCoordinates = []
 obstructionDoorStates = []
 obstructionHeadings = []
+obstructionSpeeds = []
+obstructionAccelerations = []
 
 if speeds[0] > 0 :
 	currentMotionState = CruisingState
@@ -135,16 +139,20 @@ for x in range(1, len(speeds)) :
 		obstructionCoordinates.append(Coordinate(latitudes[x], longitudes[x]))
 		obstructionDoorStates.append(doorStates[x])
 		obstructionHeadings.append(headings[x])
+		obstructionSpeeds.append(speeds[x])
+		obstructionAccelerations.append(acceleration)
 
 		if prevState != MotionState.Stopped and prevState != MotionState.Decelerating :
 			obstructionStartTime = times[x]
 	else :
 		if prevState == MotionState.Stopped or prevState == MotionState.Decelerating :
-			allObstructions.append(ObstructionPeriod(currentSeverity, obstructionStartTime, times[x], obstructionVisionStates, obstructionCoordinates, obstructionDoorStates, obstructionHeadings))
+			allObstructions.append(ObstructionPeriod(currentSeverity, obstructionStartTime, times[x], obstructionVisionStates, obstructionCoordinates, obstructionDoorStates, obstructionHeadings, obstructionSpeeds, obstructionAccelerations))
 			obstructionVisionStates = []
 			obstructionDoorStates = []
 			obstructionCoordinates = []
 			obstructionHeadings = []
+			obstructionSpeeds = []
+			obstructionAccelerations = []
 			obstructionStartTime = ""
 		currentSeverity = 0
 
