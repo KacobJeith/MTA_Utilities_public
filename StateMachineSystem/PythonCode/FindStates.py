@@ -2,6 +2,7 @@ import sys
 from datetime import datetime
 from DataTypes import Coordinate
 from DataTypes import ObstructionPeriod
+from DataTypes import GetObstructionPeriodFromString
 
 class SingleObstruction:
 	def __init__(self, severity, state, curTime) :
@@ -142,7 +143,11 @@ for x in range(1, len(speeds)) :
 		currentSeverity = 0
 
 ## Print Results
+outputFileName = fname.split('.')[0] + "_output.csv"
+f = open(outputFileName, "w")
 for x in range(0, len(allObstructions)) :
+	f.write(allObstructions[x].GetCSVString() + "\r\n")
+
 	printString = ""
 	printString += allObstructions[x].startTime + " - " + allObstructions[x].endTime
 	printString += " : " + str(allObstructions[x].severity) + " : "
@@ -153,3 +158,8 @@ for x in range(0, len(allObstructions)) :
 
 	print(printString)
 
+otherObstructionData = []
+with open(outputFileName, 'r') as f:
+	content = f.readlines()
+	for x in range(0, len(content)) :
+		otherObstructionData.append(GetObstructionPeriodFromString(content[x]))
