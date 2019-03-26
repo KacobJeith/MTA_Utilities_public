@@ -7,12 +7,20 @@ class SingleObstruction:
 		self.state = state
 		self.curTime = curTime
 
+class Coordinate:
+	def __init__(self, latitude, longitude) :
+		self.latitude = latitude
+		self.longitude = longitude
+
 class ObstructionPeriod : 
-	def __init__(self, severity, startTime, endTime, visionStates) :
+	def __init__(self, severity, startTime, endTime, visionStates, coordinates, doorStates, headings) :
 		self.severity = severity
 		self.startTime = startTime
 		self.endTime = endTime
 		self.visionStates = visionStates
+		self.coordinates = coordinates
+		self.doorStates = doorStates
+		self.headings = headings
 
 class MotionState:
 	#Motion State Enumeration
@@ -36,8 +44,12 @@ fname = sys.argv[1]
 BusDataList = []
 
 speeds = []
+latitudes = []
+longitudes = []
 states = []
 times = []
+headings = []
+doorStates = []
 
 readFirstLine = False
 
@@ -48,8 +60,12 @@ with open(fname, 'r') as f:
 
 		if readFirstLine :
 			times.append(splitValue[0])
-			speeds.append(float(splitValue[2]))
 			states.append(int(splitValue[1]))
+			speeds.append(float(splitValue[2]))
+			latitudes.append(float(splitValue[3]))
+			longitudes.append(float(splitValue[4]))
+			headings.append(float(splitValue[5]))
+			doorStates.append(int(splitValue[6]))
 		else :
 			readFirstLine = True
 
@@ -90,6 +106,9 @@ allObstructions = []
 
 obstructionStartTime = ""
 obstructionVisionStates = []
+obstructionCoordinates = []
+obstructionDoorStates = []
+obstructionHeadings = []
 
 if speeds[0] > 0 :
 	currentMotionState = CruisingState
@@ -113,13 +132,19 @@ for x in range(1, len(speeds)) :
 	if currentMotionState.GetStateType() == MotionState.Stopped or currentMotionState.GetStateType() == MotionState.Decelerating :
 		currentSeverity += 1
 		obstructionVisionStates.append(states[x])
+		obstructionCoordinates.append(Coordinate(latitudes[x], longitudes[x]))
+		obstructionDoorStates.append(doorStates[x])
+		obstructionHeadings.append(headings[x])
 
 		if prevState != MotionState.Stopped and prevState != MotionState.Decelerating :
 			obstructionStartTime = times[x]
 	else :
 		if prevState == MotionState.Stopped or prevState == MotionState.Decelerating :
-			allObstructions.append(ObstructionPeriod(currentSeverity, obstructionStartTime, times[x], obstructionVisionStates))
+			allObstructions.append(ObstructionPeriod(currentSeverity, obstructionStartTime, times[x], obstructionVisionStates, obstructionCoordinates, obstructionDoorStates, obstructionHeadings))
 			obstructionVisionStates = []
+			obstructionDoorStates = []
+			obstructionCoordinates = []
+			obstructionHeadings = []
 			obstructionStartTime = ""
 		currentSeverity = 0
 
@@ -128,6 +153,7 @@ for x in range(0, len(allObstructions)) :
 	printString = ""
 	printString += allObstructions[x].startTime + " - " + allObstructions[x].endTime
 	printString += " : " + str(allObstructions[x].severity) + " : "
+	printString += " : " + str(allObstructions[x].coordinates[0].latitude) + "," + str(allObstructions[x].coordinates[0].longitude)
 
 	for y in range(0, len(allObstructions[x].visionStates)) :
 		printString += " " + str(allObstructions[x].visionStates[y])
